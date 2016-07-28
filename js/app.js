@@ -85,42 +85,76 @@ app.init = function () {
 
     // #createModal form submit submits create user API request
     document.querySelector('#createModal form').addEventListener('submit', function (event) {
-        // TODO: Perform validation
         event.preventDefault();
         event.stopPropagation();
-        app.userCreate(new User(
+
+        // Perform validation
+        var user = new User(
             null,
             document.querySelector('#createUsername').value,
             document.querySelector('#createFirst').value,
             document.querySelector('#createLast').value,
             document.querySelector('#createCountry').value
-        ));
+        );
+
+        if (!app.userIsValid(user)) {
+            return false;
+        }
+
+        app.userCreate(user);
     })
 
     // #editModal form submit submits create user API request
     document.querySelector('#editModal form').addEventListener('submit', function (event) {
-        // TODO: Perform validation
         event.preventDefault();
         event.stopPropagation();
-        app.userEdit(new User(
+
+        // Perform validation
+        var user = new User(
             document.querySelector('#editId').value,
             document.querySelector('#editUsername').value,
             document.querySelector('#editFirst').value,
             document.querySelector('#editLast').value,
             document.querySelector('#editCountry').value
-        ));
+        );
+
+        if (!app.userIsValid(user)) {
+            return false;
+        }
+
+        app.userEdit(user);
     })
 
     // #deleteModal form submit submits create user API request
     document.querySelector('#deleteModal form').addEventListener('submit', function (event) {
-        // TODO: Perform validation
         event.preventDefault();
         event.stopPropagation();
+
         app.userDelete(document.querySelector('#deleteId').value);
     })
 
     this.renderLoading();
     this.usersRefresh();
+}
+
+app.userIsValid = function (user) {
+    if (!user.username) {
+        alert("Invalid Username")
+        return false;
+    }
+    if (!user.first_name) {
+        alert("Invalid First Name");
+        return false;
+    }
+    if (!user.last_name) {
+        alert("Invalid Last Name");
+        return false;
+    }
+    if (!user.country) {
+        alert("Invalid Country");
+        return false;
+    }
+    return true;
 }
 
 app.showCreate = function () {
