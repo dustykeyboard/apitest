@@ -1,4 +1,3 @@
-console.log('app.js');
 document.addEventListener("DOMContentLoaded", function (event) {
     app.init();
 });
@@ -11,19 +10,22 @@ function User(id, username, first, last, country) {
     this.country = country;
 }
 
+// app is the global scope 
 app = {};
 
 app.users = [];
 app.selectedUser = null;
-app.apiEndpoint = 'http://apitest.cohortdigital.com.au/users';
-//app.apiEndpoint = 'api/users';
+//app.apiEndpoint = 'http://apitest.cohortdigital.com.au/users';
+app.apiEndpoint = 'api/';
 app.apiToken = 'testing-1-2-3';
 app.tableElement = null;
 
 app.init = function () {
-    console.log('app.init');
+    this.crud = new Crud(this.apiEndpoint, this.apiToken);
+
     this.tableElement = document.querySelector('table#users');
 
+    // table listener for action buttons
     // .btn__edit opens #editModal
     // .btn__delete opens #deleteModal
     this.tableElement.addEventListener('click', function (event) {
@@ -34,7 +36,6 @@ app.init = function () {
         var id = event.target.parentNode.parentNode.getAttribute('data-id');
         for (var i = 0; i < app.users.length; i++) {
             if (app.users[i].id == id) {
-                console.log(app.users[i]);
                 app.selectedUser = app.users[i];
                 break;
             }
@@ -66,7 +67,6 @@ app.init = function () {
     var closeBtns = document.querySelectorAll('.modal__close');
     for (var i = 0; i < closeBtns.length; i++) {
         closeBtns[i].addEventListener('click', function (event) {
-            console.log('.modal__close clicked');
             app.closeModals();
         });
     }
@@ -134,7 +134,7 @@ app.init = function () {
     })
 
     this.renderLoading();
-    this.usersRefresh();
+    this.usersRead();
 }
 
 app.userIsValid = function (user) {
@@ -184,55 +184,12 @@ app.closeModals = function () {
     }
 }
 
-app.request = function (type, endpoint, data, callbackSuccess, callbackFailure) {
-    var xhr = new XMLHttpRequest();
-    xhr.open(type, endpoint);
-    xhr.setRequestHeader('content-type', 'application/json');
-    xhr.setRequestHeader('apiToken', this.apiToken);
-    xhr.send(JSON.stringify(data));
-    xhr.onreadystatechange = function () {
-        var DONE = 4;
-        var OK = 200;
-        if (xhr.readyState === DONE) {
-            if (xhr.status === OK) {
-                callbackSuccess(xhr);
-            } else {
-                callbackFailure(xhr);
-            }
-        }
-    }
-}
-
-app.usersRefresh = function () {
-    console.log('app.usersRefresh');
-    this.tableElement.className = 'users__loading';
-    this.request(
-        'GET',
-        this.apiEndpoint,
-        null,
-        function (xhr) {
-            console.log('success');
-            var data = JSON.parse(xhr.response);
-            if (data.success) {
-                app.users = data.users ? data.users : data.userList;
-            }
-            app.render();
-
-        }, function (xhr) {
-            console.log('failure');
-            app.renderError();
-        }
-    )
-}
-
 app.userCreate = function (user) {
-    console.log('app.userCreate');
     document.querySelector('#createModal .btn__submit').setAttribute('disabled', 'disabled');
-    this.request(
-        'POST',
-        this.apiEndpoint,
+    this.crud.create(
+        'users',
         user,
-        function (xhr) {
+        function (json) {
             // Hide modal
             document.querySelector('#createModal').className = 'modal';
             // Clear form fields
@@ -240,24 +197,38 @@ app.userCreate = function (user) {
             // Re-enable form submission
             document.querySelector('#createModal .btn__submit').removeAttribute('disabled');
             // Refresh all users
-            app.usersRefresh();
-        }, function (xhr) {
+            app.usersRead();
+        }, function () {
             // Re-enable form submission
             document.querySelector('#createModal .btn__submit').removeAttribute('disabled');
             // Display error alert
             alert('user creation failed');
         }
-    )
+    );
+}
+
+app.usersRead = function () {
+    this.tableElement.className = 'users__loading';
+    this.crud.read(
+        'users',
+        function (json) {
+            if (json.success) {
+                app.users = json.users ? json.users : json.userList;
+                app.render();
+            }
+            app.render();
+        }, function () {
+            app.renderError();
+        }
+    );
 }
 
 app.userEdit = function (user) {
-    console.log('app.userEdit');
     document.querySelector('#editModal .btn__submit').setAttribute('disabled', 'disabled');
-    this.request(
-        'PUT',
-        this.apiEndpoint + '/' + user.id,
+    this.crud.update(
+        'users/' + user.id,
         user,
-        function (xhr) {
+        function (json) {
             // Hide modal
             document.querySelector('#editModal').className = 'modal';
             // Clear form fields
@@ -265,31 +236,29 @@ app.userEdit = function (user) {
             // Re-enable form submission
             document.querySelector('#editModal .btn__submit').removeAttribute('disabled');
             // Refresh all users
-            app.usersRefresh();
-        }, function (xhr) {
+            app.usersRead();
+        },
+        function () {
             // Re-enable form submission
             document.querySelector('#editModal .btn__submit').removeAttribute('disabled');
             // Display error alert
             alert('user edit failed');
         }
-    )
+    );
 }
 
 app.userDelete = function (userId) {
-    console.log('app.userDelete');
     document.querySelector('#deleteModal .btn__submit').setAttribute('disabled', 'disabled');
-    this.request(
-        'DELETE',
-        this.apiEndpoint + '/' + userId,
-        null,
-        function (xhr) {
+    this.crud.delete(
+        'users/' + userId,
+        function () {
             // Hide modal
             document.querySelector('#deleteModal').className = 'modal';
             // Re-enable form submission
             document.querySelector('#deleteModal .btn__submit').removeAttribute('disabled');
             // Refresh all users
-            app.usersRefresh();
-        }, function (xhr) {
+            app.usersRead();
+        }, function () {
             // Re-enable form submission
             document.querySelector('#deleteModal .btn__submit').removeAttribute('disabled');
             // Display error alert
@@ -307,8 +276,6 @@ app.renderError = function () {
 }
 
 app.render = function () {
-    console.log('app.render');
-
     if (this.users.length > 0) {
         var newTable = '<tr><th>User ID</th><th>User Name</th><th>First</th><th>Last</th><th>Country</th><th>Actions</th></tr>';
 
