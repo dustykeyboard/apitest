@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>APITEST</title>
+    <link rel="stylesheet" type="text/css" href="css/app.css" />
+    <script type="text/javascript" src="js/app.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <table id="users" cellspacing="0" cellpadding="2">
+        </table>
+
+        <a class="btn__create" href="#create">Create User</a>
+
+        <div id="createModal" class="modal">
+            <div class="modal__close">&times;</div>
+            <h2 class="modal__title">Create User</h2>
+            <form method="post">
+                <p><label>Username:<br><input id="createUsername" required /></label></p>
+                <p><label>First:<br><input id="createFirst" required /></label></p>
+                <p><label>Last:<br><input id="createLast" required /></label></p>
+                <p><label>Country:<br><input id="createCountry" required /></label></p>
+                <p><input class="btn__submit" type="submit" value="Create" /></p>
+            </form>
+        </div>
+
+        <div id="editModal" class="modal">
+            <div class="modal__close">&times;</div>
+            <h2 class="modal__title">Edit User</h2>
+            <form method="post">
+                <input type="hidden" id="editId" />
+                <p><label>Username:<br><input id="editUsername" required /></label></p>
+                <p><label>First:<br><input id="editFirst" required /></label></p>
+                <p><label>Last:<br><input id="editLast" required /></label></p>
+                <p><label>Country:<br><input id="editCountry" required /></label></p>
+                <p><input class="btn__submit" type="submit" value="Edit" /></p>
+            </form>
+        </div>
+
+        <div id="deleteModal" class="modal">
+            <div class="modal__close">&times;</div>
+            <h2 class="modal__title">Delete User</h2>
+            <form method="post">
+                <input type="hidden" id="deleteId" />
+                <p>Really delete user <i id="deleteUsername"></i>?</p>
+                <p><input class="btn__submit" type="submit" value="Delete" /></p>
+            </form>
+        </div>
+
+    </div>
+</body>
+
+</html>

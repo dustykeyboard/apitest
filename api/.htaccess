@@ -1,0 +1,4 @@
+Options +FollowSymLinks
+RewriteEngine On
+RewriteRule ^(\w+)/(\d+)$ index.php?type=$1&id=$2
+RewriteRule ^(\w+)/?$ index.php?type=$1
