@@ -16,8 +16,9 @@ app = {};
 app.users = [];
 app.selectedUser = null;
 //app.apiEndpoint = 'http://apitest.cohortdigital.com.au/users';
+//app.apiToken = 'testing-1-2-3';
 app.apiEndpoint = 'api/';
-app.apiToken = 'testing-1-2-3';
+app.apiToken = 'EXAMPLE-AUTH-TOKEN';
 app.tableElement = null;
 
 app.init = function () {

@@ -1,6 +1,6 @@
 <?php
 
-$apiToken = 'testing-1-2-3'; 
+$apiToken = 'EXAMPLE-AUTH-TOKEN'; 
 
 $response = array(
     'success' => false

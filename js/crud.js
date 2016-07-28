@@ -4,7 +4,7 @@
 
 // 2016-07-29
 // Philip Boardman
-// https://github.com/dustykeyboard/crudjs
+// https://github.com/dustykeyboard/crud.js
 
 */
 
