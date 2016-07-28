@@ -143,6 +143,7 @@ form input {
 .btn:hover,
 .btn__create:hover,
 .btn__edit:hover {
+    color: #eee;
     background: #999;
 }
 
