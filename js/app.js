@@ -15,8 +15,8 @@ app = {};
 
 app.users = [];
 app.selectedUser = null;
-//app.apiEndpoint = 'http://apitest.cohortdigital.com.au/users';
-app.apiEndpoint = 'api/users';
+app.apiEndpoint = 'http://apitest.cohortdigital.com.au/users';
+//app.apiEndpoint = 'api/users';
 app.apiToken = 'testing-1-2-3';
 app.tableElement = null;
 
@@ -44,21 +44,13 @@ app.init = function () {
             case 'btn__edit':
                 event.preventDefault();
                 event.stopPropagation();
-
-                document.querySelector('#editId').value = app.selectedUser.id;
-                document.querySelector('#editUsername').value = app.selectedUser.username;
-                document.querySelector('#editFirst').value = app.selectedUser.first_name;
-                document.querySelector('#editLast').value = app.selectedUser.last_name;
-                document.querySelector('#editCountry').value = app.selectedUser.country;
-                document.querySelector('#editModal').className = 'modal modal--open';
+                app.showEdit();
 
                 break;
             case 'btn__delete':
                 event.preventDefault();
                 event.stopPropagation();
-                document.querySelector('#deleteId').value = app.selectedUser.id;
-                document.querySelector('#deleteUsername').innerHTML = app.selectedUser.username;
-                document.querySelector('#deleteModal').className = 'modal modal--open';
+                app.showDelete();
                 break;
         }
     });
@@ -67,9 +59,7 @@ app.init = function () {
     document.querySelector('.btn__create').addEventListener('click', function (event) {
         event.preventDefault();
         event.stopPropagation();
-        document.querySelector('#createModal').className = 'modal modal--open';
-
-        document.querySelector('#createUsername').focus();
+        app.showCreate();
     });
 
     // .modal__close closes #createModal and #editModal
@@ -77,9 +67,21 @@ app.init = function () {
     for (var i = 0; i < closeBtns.length; i++) {
         closeBtns[i].addEventListener('click', function (event) {
             console.log('.modal__close clicked');
-            document.querySelector('.modal--open').className = 'modal';
+            app.closeModals();
         });
     }
+    document.onkeydown = function (evt) {
+        evt = evt || window.event;
+        var isEscape = false;
+        if ("key" in evt) {
+            isEscape = evt.key == "Escape";
+        } else {
+            isEscape = evt.keyCode == 27;
+        }
+        if (isEscape) {
+            app.closeModals();
+        }
+    };
 
     // #createModal form submit submits create user API request
     document.querySelector('#createModal form').addEventListener('submit', function (event) {
@@ -119,6 +121,33 @@ app.init = function () {
 
     this.renderLoading();
     this.usersRefresh();
+}
+
+app.showCreate = function () {
+    document.querySelector('#createModal').className = 'modal modal--open';
+    document.querySelector('#createUsername').focus();
+}
+
+app.showEdit = function () {
+    document.querySelector('#editId').value = app.selectedUser.id;
+    document.querySelector('#editUsername').value = app.selectedUser.username;
+    document.querySelector('#editFirst').value = app.selectedUser.first_name;
+    document.querySelector('#editLast').value = app.selectedUser.last_name;
+    document.querySelector('#editCountry').value = app.selectedUser.country;
+    document.querySelector('#editModal').className = 'modal modal--open';
+}
+
+app.showDelete = function () {
+    document.querySelector('#deleteId').value = app.selectedUser.id;
+    document.querySelector('#deleteUsername').innerHTML = app.selectedUser.username;
+    document.querySelector('#deleteModal').className = 'modal modal--open';
+}
+
+app.closeModals = function () {
+    var modals = document.querySelectorAll('.modal--open');
+    for (var i = 0; i < modals.length; i++) {
+        modals[i].className = 'modal';
+    }
 }
 
 app.request = function (type, endpoint, data, callbackSuccess, callbackFailure) {
@@ -245,20 +274,25 @@ app.renderError = function () {
 
 app.render = function () {
     console.log('app.render');
-    var newTable = '<tr><th>User ID</th><th>User Name</th><th>First</th><th>Last</th><th>Country</th><th>Actions</th></tr>';
 
-    var i = 0, l = this.users.length, user = null;
-    for (; i < l; i++) {
-        user = this.users[i];
-        newTable += '<tr data-id="' + user.id + '">' +
-            '<td>' + user.id + '</td>' +
-            '<td>' + user.username + '</td>' +
-            '<td>' + user.first_name + '</td>' +
-            '<td>' + user.last_name + '</td>' +
-            '<td>' + user.country + '</td>' +
-            '<td><a class="btn__edit" href="#edit">Edit</a> <a class="btn__delete" href="#delete">Delete</a></td></tr>';
+    if (this.users.length > 0) {
+        var newTable = '<tr><th>User ID</th><th>User Name</th><th>First</th><th>Last</th><th>Country</th><th>Actions</th></tr>';
+
+        var i = 0, l = this.users.length, user = null;
+        for (; i < l; i++) {
+            user = this.users[i];
+            newTable += '<tr data-id="' + user.id + '">' +
+                '<td>' + user.id + '</td>' +
+                '<td>' + user.username + '</td>' +
+                '<td>' + user.first_name + '</td>' +
+                '<td>' + user.last_name + '</td>' +
+                '<td>' + user.country + '</td>' +
+                '<td><a class="btn__edit" href="#edit">Edit</a> <a class="btn__delete" href="#delete">Delete</a></td></tr>';
+        }
+        app.tableElement.innerHTML = newTable;
+    } else {
+        app.tableElement.innerHTML = '<tr><th>There are no users, create the first one.</th></tr>';
     }
 
-    app.tableElement.innerHTML = newTable;
     app.tableElement.className = "users";
 }

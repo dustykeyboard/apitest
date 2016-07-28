@@ -1,5 +1,13 @@
 body {
-    background: #eee;
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    min-height: 100vh;
+    background-color: #eee;
+    background-image: url(../img/wollongong.jpg);
+    background-position: center;
+    background-size: cover;
+    -webkit-backdrop-filter: blur(1em);
 }
 #app {
     color: #333;
@@ -8,12 +16,19 @@ body {
     max-width: 42em;
     margin: 0 auto;
     padding: 1em;
+    box-shadow: 0 .5em 1em rgba(0,0,0,.3);
+}
+.app__title {
+    font-size: 2em;
+    font-family: serif;
+    margin: 1em 0 .5em;
 }
 
 table {
     width: 100%;
     margin: 0 0 1em;
     border-collapse: collapse;
+    transition: .3s;
 }
 table.users__loading {
     pointer-events: none;
@@ -21,32 +36,62 @@ table.users__loading {
 }
 th {
     background-color: #CCCCCD;
+    text-align: left;
+    font-family: sans-serif;
+}
+tr {
+    background-color: #f8f8f8;
 }
 tr:nth-child(2n+1) {
     background-color: #EDEDED;
 }
-th,td {
-    border: 1px solid #333;
+tr:hover {
+    background-color: #f8f8e4;
 }
-td:last-child {
-    text-align: right;
+th,td {
+    margin: 0;
+    padding: .3em .5em;
+    cursor: default;
+}
+th:not(:first-child),
+td:not(:first-child) {
+    border-left: 1px solid white;
 }
 
 .modal {
     visibility: hidden;
     opacity: 0;
     position: absolute;
-    top: 2em;
+    z-index: 3;
+    top: 110px;
     left: 50%;
     width: 20em;
     margin-left: -10em;
     padding: 1em;
     box-sizing: border-box;
     background: white;
-    outline: 100em solid rgba(0,0,0,.8);
+    border-radius: .2em;
+    box-shadow: .2em .3em .5em rgba(0,0,0,.3);
     transition: .3s;
 }
 .modal--open {
+    visibility: visible;
+    opacity: 1;
+    top: 2em;
+}
+.modal__shade {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,.5);
+    transition: .3s;
+    -webkit-backdrop-filter: blur(1em);
+}
+.modal--open ~ .modal__shade {
     visibility: visible;
     opacity: 1;
 }
@@ -55,15 +100,27 @@ td:last-child {
     top: -1em;
     right: -1em;
     color: white;
-    background: red;
+    background: rgb(225, 5, 64);
     text-align: center;
     width: 2em;
     line-height: 2em;
     border-radius: 1em;
     cursor: pointer;
+    box-shadow: .1em .2em .3em rgba(0,0,0,.4);
+    transition: .3s;
+}
+.modal__close:hover {
+    background-color: rgb(198, 4, 56);
 }
 .modal__title {
     margin: 0 0 .2em;
+}
+form label {
+    font-family: sans-serif;
+}
+form input {
+    font-size: inherit;
+    font-family: serif;
 }
 
 .btn,
@@ -73,10 +130,10 @@ td:last-child {
 .btn__submit {
     display: inline-block;
     text-decoration: none;
-    padding: .2em .5em;
+    padding: .3em .5em;
     color: #333;
     background-color: #ccc;
-    border-radius: .3em;
+    border-radius: .1em;
     transition: .3s;
     font-family: sans-serif;
     border: 0;

@@ -1,4 +1,4 @@
-# aptest
+# apitest
 Vanilla Javascript interface with a JSON CRUD API
 
 If API is hosted on a remote server, cross-origin issues will need to be resolved.
