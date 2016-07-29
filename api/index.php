@@ -105,8 +105,5 @@ switch($_SERVER['REQUEST_METHOD']) {
 
 }
 
-// Artificial delay
-sleep(1);
-
 header('Content-Type: application/json');
 echo json_encode($response);
