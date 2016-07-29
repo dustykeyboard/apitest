@@ -160,7 +160,6 @@ app.userIsValid = function (user) {
 
 app.showCreate = function () {
     document.querySelector('#createModal').className = 'modal modal--open';
-    document.querySelector('#createModal').setAttribute('aria-hidden', 'false');
     document.querySelector('#createUsername').focus();
 }
 
@@ -171,7 +170,6 @@ app.showEdit = function () {
     document.querySelector('#editLast').value = app.selectedUser.last_name;
     document.querySelector('#editCountry').value = app.selectedUser.country;
     document.querySelector('#editModal').className = 'modal modal--open';
-    document.querySelector('#editModal').setAttribute('aria-hidden', 'false');
     document.querySelector('#editUsername').focus();
 }
 
@@ -179,14 +177,12 @@ app.showDelete = function () {
     document.querySelector('#deleteId').value = app.selectedUser.id;
     document.querySelector('#deleteUsername').innerHTML = app.selectedUser.username;
     document.querySelector('#deleteModal').className = 'modal modal--open';
-    document.querySelector('#deleteModal').setAttribute('aria-hidden', 'false');
 }
 
 app.closeModals = function () {
     var modals = document.querySelectorAll('.modal--open');
     for (var i = 0; i < modals.length; i++) {
         modals[i].className = 'modal';
-        modals[i].setAttribute('aria-hidden', 'true');
     }
 }
 
